@@ -1,0 +1,4 @@
+yt-dlp>=2023.11.16
+fastapi>=0.95.0
+uvicorn>=0.21.1
+python-multipart>=0.0.6
