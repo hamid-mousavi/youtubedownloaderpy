@@ -68,7 +68,7 @@ def start_download():
                     'preferredquality': '192',
                 }],
                 'ffmpeg_location': 'ffmpeg',
-                'cookiesfrombrowser': ('firefox',),
+                # 'cookiesfrombrowser': ('firefox',),
                 'quiet': True
             }
         else:
