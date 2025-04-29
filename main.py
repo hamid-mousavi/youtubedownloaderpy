@@ -13,7 +13,7 @@ def index():
         url = request.form['url']
         try:
             ydl_opts = {
-                'cookiesfrombrowser': ('firefox',),
+                # 'cookiesfrombrowser': ('firefox',),
                 'quiet': True,
                 'skip_download': True
             }
