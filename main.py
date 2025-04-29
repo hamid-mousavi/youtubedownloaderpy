@@ -75,7 +75,7 @@ def start_download():
             ydl_opts = {
                 'format': format_id,
                 'outtmpl': temp_path,
-                'cookiesfrombrowser': ('firefox',),
+                # 'cookiesfrombrowser': ('firefox',),
                 'quiet': True
             }
 
