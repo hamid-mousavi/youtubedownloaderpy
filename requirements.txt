@@ -6,3 +6,4 @@ Jinja2==2.11.3
 MarkupSafe==1.1.1
 Werkzeug==1.0.1
 yt-dlp==2025.3.31
+python-telegram-bot==20.3

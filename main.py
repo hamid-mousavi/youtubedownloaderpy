@@ -1,55 +1,35 @@
-from flask import Flask, request, jsonify
-import yt_dlp
 import os
+import yt_dlp
+from telegram import Update
+from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ContextTypes
 
-app = Flask(__name__)
+TELEGRAM_TOKEN = os.environ['BOT_TOKEN']
 
-@app.route("/download", methods=["GET"])
-def download():
-    video_url = request.args.get("url")
-    if not video_url:
-        return jsonify({"error": "Missing 'url' parameter"}), 400
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("سلام! لینک اینستاگرام رو بفرست تا لینک دانلود بدم.")
 
-    # ذخیره محتوای کوکی از متغیر محیطی
-    cookies_env = os.getenv("COOKIES_DATA")
-    cookies_path = "cookies.txt"
-
-    if cookies_env:
-        with open(cookies_path, "w", encoding="utf-8") as f:
-            f.write(cookies_env)
+async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    url = update.message.text
+    await update.message.reply_text("در حال پردازش...")
 
     ydl_opts = {
         'quiet': True,
         'skip_download': True,
-        'forcejson': True,
+        'force_generic_extractor': False,
         'extract_flat': False,
     }
 
-    if cookies_env:
-        ydl_opts['cookiefile'] = cookies_path
-
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            info = ydl.extract_info(video_url, download=False)
-            formats = info.get('formats', [])
-            best = next((f for f in formats[::-1] if f.get('url')), None)
-
-            return jsonify({
-                'title': info.get('title'),
-                'thumbnail': info.get('thumbnail'),
-                'duration': info.get('duration'),
-                'formats': formats,
-                'best_url': best.get('url') if best else None
-            })
-
+            info = ydl.extract_info(url, download=False)
+            video_url = info.get('url') or info.get('best_url')
+            duration = info.get('duration')
+            await update.message.reply_text(f"🎬 ویدیو آماده است:\n\n🔗 لینک: {video_url}\n⏱ مدت: {duration} ثانیه")
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-# if __name__ == "__main__":
-#     app.run(host="0.0.0.0", port=5000)
-
+        await update.message.reply_text(f"خطا در پردازش لینک:\n{e}")
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
-
-    
+    app = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
+    app.add_handler(CommandHandler('start', start))
+    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
+    app.run_polling()
