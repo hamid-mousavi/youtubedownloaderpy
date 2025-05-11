@@ -3,7 +3,6 @@ import yt_dlp
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ContextTypes
 
-# توکن ربات رو اینجا موقت وارد کن، بعداً از env می‌گیریم
 BOT_TOKEN = os.environ.get("BOT_TOKEN")
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -26,7 +25,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             if not formats:
                 raise Exception("هیچ فرمتی پیدا نشد.")
 
-            best = formats[-1]  # یا یک فیلتر برای بهترین کیفیت بزن
+            best = formats[-1]
             video_url = best.get("url")
             title = info.get("title", "بدون عنوان")
             duration = info.get("duration", "نامشخص")
@@ -37,8 +36,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     except Exception as e:
         await update.message.reply_text(f"❌ خطا:\n{str(e)}")
 
-if __name__ == '__main__':
-    app = ApplicationBuilder().token(BOT_TOKEN).build()
-    app.add_handler(CommandHandler('start', start))
-    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
-    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
+# ✅ اینو در سطح بالا بذار تا gunicorn بتونه app رو پیدا کنه
+app = ApplicationBuilder().token(BOT_TOKEN).build()
+app.add_handler(CommandHandler('start', start))
+app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
