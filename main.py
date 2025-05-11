@@ -2,7 +2,11 @@ import os
 import yt_dlp
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ContextTypes
+import ffmpeg  # فقط برای اطمینان از نصب
+import ffmpeg_static
+print("ffmpeg path:", ffmpeg_static.get_path())
 
+os.environ['PATH'] += os.pathsep + os.path.abspath("site-packages/ffmpeg_static/bin")
 BOT_TOKEN = os.environ.get("BOT_TOKEN")
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
