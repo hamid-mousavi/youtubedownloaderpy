@@ -26,13 +26,18 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             filename = ydl.prepare_filename(info)
             title = info.get("title", "بدون عنوان")
 
-        await update.message.reply_video(video=open(filename, 'rb'), caption=title)
+        # await update.message.reply_video(video=open(filename, 'rb'), caption=title)
 
         # حذف فایل بعد از ارسال
         with open(filename, 'rb') as video_file:
             await update.message.reply_video(video=video_file, caption=title)
 
-        os.remove(filename)
+        try:
+            os.remove(filename)
+            print(f"🧹 فایل حذف شد: {filename}")
+        except Exception as e:
+            print(f"⚠️ خطا در حذف فایل: {e}")
+
 
     except Exception as e:
         await update.message.reply_text(f"❌ خطا:\n{str(e)}")
