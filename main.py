@@ -25,7 +25,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             if not formats:
                 raise Exception("هیچ فرمتی پیدا نشد.")
 
-            best = formats[-1]
+            best = formats[-1]  # یا یک فیلتر برای بهترین کیفیت بزن
             video_url = best.get("url")
             title = info.get("title", "بدون عنوان")
             duration = info.get("duration", "نامشخص")
@@ -36,7 +36,8 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     except Exception as e:
         await update.message.reply_text(f"❌ خطا:\n{str(e)}")
 
-# ✅ اینو در سطح بالا بذار تا gunicorn بتونه app رو پیدا کنه
-app = ApplicationBuilder().token(BOT_TOKEN).build()
-app.add_handler(CommandHandler('start', start))
-app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
+if __name__ == '__main__':
+    app = ApplicationBuilder().token(BOT_TOKEN).build()
+    app.add_handler(CommandHandler('start', start))
+    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
+    app.run_polling()
